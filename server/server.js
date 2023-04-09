@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path');
-const db = require('./db.js')
+const db = require('./db')
+const cors =require ('cors');
 
 const getSectors=async (req,res)=>{
     try {
@@ -50,6 +51,8 @@ const getSectors=async (req,res)=>{
 }
 
     const app = express()
+    app.enable('trust proxy');
+    app.use(cors());
     
     app.get('/sectors', getSectors);
     app.get('/', (req, res) => {
