@@ -2,6 +2,7 @@ const express = require('express')
 const path = require('path');
 const db = require('./db')
 const cors =require ('cors');
+const bodyParser = require('body-parser')
 
 const getSectors=async (req,res)=>{
     try {
@@ -50,14 +51,35 @@ const getSectors=async (req,res)=>{
       }
 }
 
+const addUser=async(req,res)=>{
+    try {
+        
+    
+    const {id,name,sector,agree_terms}=req.body
+    let result
+    if(!id){
+   result=await db.query("INSERT INTO users (user_name,user_sector,agree_terms) values($1,$2,$3) RETURNING *",[name,sector,agree_terms])
+  }
+   else{
+     result=await db.query("UPDATE users SET user_name = $2, user_sector = $3, agree_terms = $4 WHERE user_id = $1 RETURNING *",[id,name,sector,agree_terms])
+   }
+   res.json(result.rows[0])
+} catch (error) {
+    res.send(error)   
+}
+}
+
     const app = express()
     app.enable('trust proxy');
     app.use(cors());
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.json());
     
     app.get('/sectors', getSectors);
     app.get('/', (req, res) => {
-        res.send('pong 🏓')
+        res.send('welcome 🏓')
     })
+    app.post('/user',addUser)
 
     const port = process.env.PORT || 8080
 
