@@ -1,6 +1,6 @@
 var pg = require('pg');
 
-var conString = "postgres://doyyfffe:clQCO0U_Qbw1peLlkEric-30uHEPk9IK@snuffleupagus.db.elephantsql.com/doyyfffe" 
+var conString = "postgres://sgtwducb:8n_z9boDg4fyH_43thF2yv6h--PJuYsG@snuffleupagus.db.elephantsql.com/sgtwducb" 
 var db = new pg.Client(conString);
 db.connect(function(err) {
   if(err) {
