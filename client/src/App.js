@@ -1,25 +1,52 @@
 import react,{useEffect,useState} from 'react';
+import "./App.css"
+import Spinner from './Spinner';
 
 function App() {
+  //states
  const [sectors,setSectors]=useState([])
+ const [status,setStatus] = useState(false)
  const [name,setName]=useState("")
  const[sector,setSector]=useState("")
  const [agreeTerms,setagreeTerms]=useState("")
  const [id,setUserId]=useState(undefined)
+
+//use effect hook
   useEffect(() => {
     fetch('https://coding-challenge-api.vercel.app/sectors').then(responce => responce.json()).then(data=>setSectors(data))
   }, []);
+
+  //save
   const onSubmitForm = async e => {
     e.preventDefault();
     try {
-
+        setStatus(true)
       const body = {name,sector:sector.replace(/^&nbsp;/, ''),agree_terms:agreeTerms,id };
-       fetch("https://coding-challenge-api.vercel.app/user", {
+      if(!name){
+        setStatus(false)
+        return alert('Please enter a name')
+      } 
+      if(!sector){
+        setStatus(false)
+        return alert('Please select a sector')
+      }
+      if(!agreeTerms){
+        setStatus(false)
+        return alert('You need to accept the terms first')
+      }
+      fetch("https://coding-challenge-api.vercel.app/user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
       }).then(response => response.json())
       .then(data => {
+        setStatus(false)
+        if(!id){
+          alert("Info added successfully")
+        }
+        else{
+          alert("Info updated successfully")
+        }
         setUserId(data.user_id)
         console.log(data)
       })
@@ -31,15 +58,18 @@ function App() {
 
   return (
     <div className="App">
+      <div className='form'>
+        <h1>
        Please enter your name and pick the Sectors you are currently involved in.
-      <br/>
-      <br/>
-      Name: 
-      <input  value={name} onChange={(e)=>setName(e.target.value)} type="text"/>
-      <br/>
-      <br/>
-      Sectors: 
-      <select  size="5" value={sector} onChange={(e)=>setSector(e.target.value)}>
+       </h1>
+       <div className='mt'>
+       <label className='mt' htmlFor="">Name: </label>
+      
+      <input  className='input' value={name} onChange={(e)=>setName(e.target.value)} type="text"/>
+      </div>
+     <div className='mt'>
+     <label  htmlFor=""> Sectors: </label> 
+      <select className='input' size="6" value={sector} onChange={(e)=>setSector(e.target.value)}>
         {sectors && sectors.map((sector)=>{
           return(
             <>
@@ -61,12 +91,12 @@ function App() {
 
         })}
       </select>
-      <br/>
-      <br/>
+      </div>
+      <div className='mt'>
       <input type="checkbox" onChange={(e)=>setagreeTerms(e.target.checked)}/> Agree to terms
-      <br/>
-      <br/>
-      <input type="submit" value="Save" onClick={onSubmitForm}></input>
+      </div>
+      <button class="btn mt" type="submit" value="Save" onClick={onSubmitForm}>{status ?(<><Spinner/> saving</>):("Save")} </button>
+      </div>
     </div>
   );
 }
