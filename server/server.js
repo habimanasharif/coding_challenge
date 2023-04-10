@@ -3,7 +3,7 @@ const path = require('path');
 const db = require('./db')
 const cors =require ('cors');
 const bodyParser = require('body-parser')
-
+//Getting sector controller
 const getSectors=async (req,res)=>{
     try {
         
@@ -52,6 +52,8 @@ const getSectors=async (req,res)=>{
       }
 }
 
+
+//Adding User Controller
 const addUser=async(req,res)=>{
     try {
         
